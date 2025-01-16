@@ -36,18 +36,18 @@ jobs:
       # Step 4: Build Docker image
       - name: Build Docker image
         run: |
-          docker build -t asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/YOUR_REPOSITORY/node-sample-app:${{ github.sha }} .
+          docker build -t asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fin1-dev/node-sample-app:${{ github.sha }} .
 
       # Step 5: Push Docker image to Google Artifact Registry
       - name: Push Docker image to Artifact Registry
         run: |
-          docker push asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/YOUR_REPOSITORY/node-sample-app:${{ github.sha }}
+          docker push asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fin1-dev/node-sample-app:${{ github.sha }}
 
       # Step 6: Deploy the Docker image to Google Cloud Run
       - name: Deploy to Google Cloud Run
         run: |
           gcloud run deploy node-sample-app \
-            --image asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/YOUR_REPOSITORY/node-sample-app:${{ github.sha }} \
+            --image asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fin1-dev/node-sample-app:${{ github.sha }} \
             --platform managed \
             --region us-central1 \
             --allow-unauthenticated
