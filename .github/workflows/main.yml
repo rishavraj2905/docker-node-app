@@ -21,8 +21,13 @@ jobs:
       # Step 3: Log in to Google Cloud (use secrets for GCP credentials)
       - name: Log in to Google Cloud
         run: |
-          echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > /tmp/gcloud-service-key.json
+          # Decode the base64-encoded service account key and write it to a temporary file
+          echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY_BASE64 }}" | base64 --decode > /tmp/gcloud-service-key.json
+
+          # Authenticate using the decoded service account key
           gcloud auth activate-service-account --key-file=/tmp/gcloud-service-key.json
+
+          # Set the Google Cloud project
           gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
         
       # Step 4: Build Docker image
