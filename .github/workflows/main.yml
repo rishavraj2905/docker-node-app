@@ -29,22 +29,25 @@ jobs:
 
           # Set the Google Cloud project
           gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
-        
+
+          # Authenticate Docker with Artifact Registry
+          gcloud auth configure-docker asia-south1-docker.pkg.dev  # for Artifact Registry
+
       # Step 4: Build Docker image
       - name: Build Docker image
         run: |
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/node-sample-app:${{ github.sha }} .
+          docker build -t asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/YOUR_REPOSITORY/node-sample-app:${{ github.sha }} .
 
-      # Step 5: Push Docker image to Google Container Registry (GCR)
-      - name: Push Docker image to GCR
+      # Step 5: Push Docker image to Google Artifact Registry
+      - name: Push Docker image to Artifact Registry
         run: |
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/node-sample-app:${{ github.sha }}
+          docker push asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/YOUR_REPOSITORY/node-sample-app:${{ github.sha }}
 
       # Step 6: Deploy the Docker image to Google Cloud Run
       - name: Deploy to Google Cloud Run
         run: |
           gcloud run deploy node-sample-app \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/node-sample-app:${{ github.sha }} \
+            --image asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/YOUR_REPOSITORY/node-sample-app:${{ github.sha }} \
             --platform managed \
             --region us-central1 \
             --allow-unauthenticated
