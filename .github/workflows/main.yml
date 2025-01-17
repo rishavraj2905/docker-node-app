@@ -30,7 +30,7 @@ jobs:
           token_format: 'access_token'
           workload_identity_provider:  ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-          audience: "projects/${{ secrets.GCP_PROJECT_ID }}
+          audience: "projects/${{ secrets.GCP_PROJECT_ID }}"
 
       # Step 4: Build Docker image
       - name: Build Docker image
