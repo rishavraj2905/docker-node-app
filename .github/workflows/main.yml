@@ -8,11 +8,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
-	permissions:
-      contents: 'read'
-      id-token: 'write'
-	  
+
     steps:
       # Step 1: Checkout the repository code
       - name: Checkout code
@@ -22,14 +18,20 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # Configure Workload Identity Federation and generate an access token.
-      - id: 'auth'
-        name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@v1'
-        with:
-          token_format: 'access_token'
-          workload_identity_provider:  ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      # Step 3: Log in to Google Cloud (use secrets for GCP credentials)
+      - name: Log in to Google Cloud
+        run: |
+          # Decode the base64-encoded service account key and write it to a temporary file
+          echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY_BASE64 }}" | base64 --decode > /tmp/gcloud-service-key.json
+
+          # Authenticate using the decoded service account key
+          gcloud auth activate-service-account --key-file=/tmp/gcloud-service-key.json
+
+          # Set the Google Cloud project
+          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+
+          # Authenticate Docker with Artifact Registry
+          gcloud auth configure-docker asia-south1-docker.pkg.dev  # for Artifact Registry
 
       # Step 4: Build Docker image
       - name: Build Docker image
@@ -52,4 +54,3 @@ jobs:
         env:
           GOOGLE_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           GOOGLE_REGION: us-central1
-	  
