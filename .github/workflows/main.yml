@@ -22,13 +22,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # Step 3: Log in to Google Cloud (use secrets for GCP credentials)
+      # Step 3: Log in to Google Cloud (use Workload Identity Federation)
       - name: Set up Google Cloud authentication
         uses: google-github-actions/auth@v1
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}  # The full Workload Identity Provider URL
           service_account: github-actions@fin1-433309.iam.gserviceaccount.com  # The service account email you're assuming
-          audience: "projects/${{ secrets.GCP_PROJECT_ID }}/locations/global/workloadIdentityPools/${{ secrets.GCP_WORKLOAD_IDENTITY_POOL }}/providers/${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
 
       # Step 4: Build Docker image
       - name: Build Docker image
